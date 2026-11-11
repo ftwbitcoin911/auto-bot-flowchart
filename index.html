@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业交易系统自动化交易 | Pro Trading System</title>
+    <style>
+        :root {
+            --bg-deep: #09090b;
+            --bg-panel: #18181b;
+            --bg-sub-item: rgba(255, 255, 255, 0.02);
+            --bg-sub-item-hover: rgba(212, 175, 55, 0.05);
+            --gold-bright: #FFD700;
+            --gold-metallic: #D4AF37;
+            --gold-border: rgba(212, 175, 55, 0.3);
+            --gold-border-hover: rgba(212, 175, 55, 0.6);
+            --text-primary: #FAFAFA;
+            --text-secondary: #A1A1AA;
+            --badge-bg: linear-gradient(90deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+            --sub-border: rgba(255, 255, 255, 0.05);
+            --shadow-gold: 0 0 20px rgba(212, 175, 55, 0.1);
+            --shadow-gold-hover: 0 0 30px rgba(212, 175, 55, 0.2);
+            --icon-color: #FAFAFA;
+            --transition-speed: 0.4s;
+        }
+        body.light-mode {
+            --bg-deep: #F8FAFC;
+            --bg-panel: #FFFFFF;
+            --bg-sub-item: #F8FAFC;
+            --bg-sub-item-hover: #FFF9E6;
+            --gold-bright: #B8860B;
+            --gold-metallic: #B8860B;
+            --gold-border: rgba(184, 134, 11, 0.2);
+            --gold-border-hover: rgba(184, 134, 11, 0.5);
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --badge-bg: linear-gradient(90deg, rgba(184, 134, 11, 0.08) 0%, transparent 100%);
+            --sub-border: rgba(0, 0, 0, 0.05);
+            --shadow-gold: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-gold-hover: 0 10px 30px rgba(184, 134, 11, 0.15);
+            --icon-color: #0F172A;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-deep);
+            background-image: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%), radial-gradient(circle at 50% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; padding: 60px 20px; -webkit-font-smoothing: antialiased; position: relative;
+        }
+        .top-right-corner {
+            position: absolute; top: 30px; right: 40px; display: flex; align-items: center; gap: 12px; z-index: 100;
+        }
+        .author-badge {
+            font-size: 13px; font-weight: 600; color: var(--text-secondary); letter-spacing: 1px; border: 1px solid var(--gold-border); padding: 5px 12px; border-radius: 20px; background: var(--bg-panel); box-shadow: var(--shadow-gold); display: flex; align-items: center;
+        }
+        .author-badge span { color: var(--gold-bright); font-weight: 900; margin-left: 4px; }
+        .theme-toggle {
+            background: var(--bg-panel); border: 1px solid var(--gold-border); color: var(--icon-color); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: var(--shadow-gold); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 0; outline: none;
+        }
+        .theme-toggle:hover { transform: scale(1.1); border-color: var(--gold-metallic); box-shadow: var(--shadow-gold-hover); }
+        .theme-toggle svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.4s ease; }
+        .icon-moon { display: block; }
+        .icon-sun { display: none; }
+        body.light-mode .icon-moon { display: none; }
+        body.light-mode .icon-sun { display: block; }
+        .header-section { text-align: center; margin-bottom: 60px; position: relative; margin-top: 20px; }
+        .header-section::after { content: ''; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); width: 80px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold-bright), transparent); }
+        .main-title {
+            font-size: 42px; font-weight: 900; letter-spacing: 4px; background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold-metallic) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; margin-bottom: 12px; text-shadow: 0 10px 30px rgba(212,175,55,0.15);
+        }
+        .sub-title { font-size: 16px; color: var(--text-secondary); letter-spacing: 2px; font-weight: 600; }
+        .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 40px; position: relative; }
+        .module-card { background: var(--bg-panel); border: 1px solid var(--gold-border); border-radius: 16px; box-shadow: var(--shadow-gold); display: flex; position: relative; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; border-top: 2px solid var(--gold-metallic); }
+        .module-card:hover { box-shadow: var(--shadow-gold-hover); border-color: var(--gold-border-hover); transform: translateY(-2px); }
+        .letter-badge {
+            width: 80px; flex-shrink: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 40px; font-size: 36px; font-weight: 900; color: var(--gold-bright); background: var(--badge-bg); border-right: 1px solid var(--gold-border); text-shadow: 0 0 15px rgba(212,175,55,0.2);
+        }
+        .content-area { flex-grow: 1; padding: 40px; }
+        .section-title { font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+        .section-title span { color: var(--gold-bright); }
+        .sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        .sub-item {
+            background: var(--bg-sub-item); border: 1px solid var(--sub-border); border-radius: 12px; padding: 20px; transition: all 0.3s ease; position: relative;
+        }
+        .sub-item:hover { background: var(--bg-sub-item-hover); border-color: var(--gold-border-hover); transform: translateX(4px); }
+        .sub-item::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 40%; background: var(--gold-metallic); border-radius: 0 4px 4px 0; opacity: 0.5; transition: all 0.3s; }
+        .sub-item:hover::before { opacity: 1; height: 60%; box-shadow: 0 0 10px var(--gold-bright); }
+        .text-content { font-size: 15px; line-height: 1.6; color: var(--text-secondary); }
+        .highlight-gold { color: var(--gold-bright); font-weight: 700; }
+        .highlight-white { color: var(--text-primary); font-weight: 600; }
+        .tag {
+            display: inline-block; background: var(--badge-bg); color: var(--gold-bright); border: 1px solid var(--gold-border); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .flow-arrow { width: 2px; height: 30px; background: linear-gradient(180deg, var(--gold-border) 0%, var(--gold-metallic) 100%); margin: -10px auto 10px auto; position: relative; }
+        .flow-arrow::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--gold-metallic); }
+        @media (max-width: 768px) {
+            body { padding: 80px 15px 40px 15px; }
+            .top-right-corner { top: 20px; right: 20px; gap: 8px; }
+            .author-badge { font-size: 11px; padding: 4px 8px; }
+            .main-title { font-size: 28px; letter-spacing: 2px; }
+            .sub-title { font-size: 14px; }
+            .module-card { flex-direction: column; }
+            .letter-badge { width: 100%; padding: 20px 0; font-size: 30px; border-right: none; border-bottom: 1px solid var(--gold-border); background: linear-gradient(180deg, var(--bg-sub-item-hover) 0%, transparent 100%); }
+            .content-area { padding: 24px; }
+            .section-title { font-size: 20px; }
+            .sub-item:hover { transform: translateY(-2px); }
+            .sub-item:hover::before { height: 40%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-right-corner">
+        <div class="author-badge">/<span>911</span></div>
+        <button class="theme-toggle" id="themeToggle" title="切换黑白主题">
+            <svg class="icon-moon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+            </svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41.39.39 1.03.39 1.41 0l1.06-1.06z"/>
+            </svg>
+        </button>
+    </div>
+
+    <header class="header-section">
+        <h1 class="main-title">专业交易系统自动化交易</h1>
+        <p class="sub-title">Professional Trading System Automation Blueprint</p>
+    </header>
+
+    <div class="container">
+        <div class="module-card">
+            <div class="letter-badge">A</div>
+            <div class="content-area">
+                <div class="section-title">系统<span>定义</span>：交易系统的四大基石</div>
+                <div class="sub-grid">
+                    <div class="sub-item">
+                        <div class="tag">策略 Strategy</div>
+                        <div class="text-content">
+                            入场/出场规则，也就是策略，必须<span class="highlight-gold">精确到价格的每一分钱</span>。
+                        </div>
+                    </div>
+                    <div class="sub-item">
+                        <div class="tag">纪律 Discipline</div>
+                        <div class="text-content">
+                            <span class="highlight-white">正收益且执行纪律</span>：策略需要回测，保证长期正收益，然后就是严格执行纪律。
+                        </div>
+                    </div>
+                    <div class="sub-item">
+                        <div class="tag">仓位 Position</div>
+                        <div class="text-content">
+                            <span class="highlight-white">仓位管理</span>：买多少，解决核心就是如果连续错，可以错多少次可以等到顺风期。
+                        </div>
+                    </div>
+                    <div class="sub-item">
+                        <div class="tag">风控 Risk Control</div>
+                        <div class="text-content">
+                            止盈止损交给概率，保证长期的盈亏比在分布带上可以<span class="highlight-gold">一笔赚的可以覆盖很多笔亏的</span>：入场如果买了后一直涨，就拿住；如果买了后打到了出场位置就止损。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <div class="module-card">
+            <div class="letter-badge">B</div>
+            <div class="content-area">
+                <div class="section-title">自动化<span>执行</span>：靠代码控制交易自动化</div>
+                <div class="text-content" style="margin-bottom: 20px; font-size: 16px;">
+                    <span class="highlight-white">bot = 机器人</span>。部署本地电脑版本或者服务器版本执行交易系统，推荐服务器版本是因为可以<span class="highlight-gold">7x24 小时做到自动化</span>。
+                </div>
+                <div class="sub-grid">
+                    <div class="sub-item">
+                        <div class="text-content">
+                            <span class="highlight-white">Python代码程序</span>做到让机器人如何执行策略的买和卖。
+                        </div>
+                    </div>
+                    <div class="sub-item">
+                        <div class="text-content">
+                            <span class="highlight-white">API</span>解决交易所和程序自动化的桥梁，也就是如何让程序自动在交易所下单。
+                        </div>
+                    </div>
+                    <div class="sub-item">
+                        <div class="text-content">
+                            <span class="highlight-white">JSON环境配置</span>解决的是如何控制买什么币种，且多少倍杠杆，交易什么周期，是小时线还是日线。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <div class="module-card">
+            <div class="letter-badge">C</div>
+            <div class="content-area">
+                <div class="section-title">交易<span>接口</span>：交易所程序对接</div>
+                <div class="sub-grid" style="grid-template-columns: 1fr;">
+                    <div class="sub-item">
+                        <div class="text-content">
+                            中心化交易所 <span class="highlight-white">OKX</span> 和 <span class="highlight-white">Binance</span> 以及去中心化交易所 <span class="highlight-gold">Hyperliquid</span> 的自动下单程序写法和部署方法。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-arrow"></div>
+
+        <div class="module-card">
+            <div class="letter-badge">D</div>
+            <div class="content-area">
+                <div class="section-title">物理<span>部署</span>：服务器选择与节点</div>
+                <div class="sub-grid" style="grid-template-columns: 1fr;">
+                    <div class="sub-item">
+                        <div class="text-content">
+                            如何选择服务器，推荐腾讯和阿里，但是节点选择<span class="highlight-gold">新加坡或者日本</span>，<span class="highlight-gold" style="text-decoration: underline; text-underline-offset: 4px;">不要选择中国大陆和香港</span>。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggleBtn = document.getElementById('themeToggle');
+            var bodyEl = document.body;
+            toggleBtn.addEventListener('click', function() {
+                bodyEl.classList.toggle('light-mode');
+            });
+        });
+    </script>
+</body>
+</html>
